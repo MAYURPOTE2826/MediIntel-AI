@@ -25,4 +25,15 @@ class MedicalReport(TimestampMixin, SoftDeleteMixin, db.Model):
     classification_model_version = db.Column(db.String(50), nullable=True)
     classified_at = db.Column(db.DateTime, nullable=True)
 
+    # Explanation Data
+    explanation_text = db.Column(db.Text, nullable=True)
+    explanation_citations = db.Column(db.JSON, nullable=True)
+    explanation_manual_qa_required = db.Column(db.Boolean, default=False)
+    
+    # Confidence Metrics
+    explanation_confidence = db.Column(db.Float, nullable=True)
+    specialist_recommendation_confidence = db.Column(db.Float, nullable=True)
+    key_findings_confidence = db.Column(db.Float, nullable=True)
+    composite_confidence_score = db.Column(db.Float, nullable=True)
+
     user = db.relationship('User', backref=db.backref('medical_reports', lazy=True))

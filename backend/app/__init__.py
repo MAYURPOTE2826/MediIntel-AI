@@ -28,10 +28,12 @@ def create_app():
     from app.auth.routes import auth_bp
     from app.uploads.routes import uploads_bp
     from app.ocr.routes import ocr_bp
+    from app.explanation.routes import explanation_bp
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(uploads_bp, url_prefix='/api/uploads')
     app.register_blueprint(ocr_bp, url_prefix='/api/ocr')
+    app.register_blueprint(explanation_bp, url_prefix='/api/explanation')
     
     # Basic health check route
     @app.route('/health')
