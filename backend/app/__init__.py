@@ -29,11 +29,13 @@ def create_app():
     from app.uploads.routes import uploads_bp
     from app.ocr.routes import ocr_bp
     from app.explanation.routes import explanation_bp
+    from app.recommendation.routes import recommendation_bp
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(uploads_bp, url_prefix='/api/uploads')
     app.register_blueprint(ocr_bp, url_prefix='/api/ocr')
     app.register_blueprint(explanation_bp, url_prefix='/api/explanation')
+    app.register_blueprint(recommendation_bp, url_prefix='/api/recommendation')
     
     # Basic health check route
     @app.route('/health')
