@@ -30,16 +30,22 @@ def create_app():
     from app.ocr.routes import ocr_bp
     from app.explanation.routes import explanation_bp
     from app.recommendation.routes import recommendation_bp
+    from app.questions.routes import questions_bp
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(uploads_bp, url_prefix='/api/uploads')
     app.register_blueprint(ocr_bp, url_prefix='/api/ocr')
     app.register_blueprint(explanation_bp, url_prefix='/api/explanation')
     app.register_blueprint(recommendation_bp, url_prefix='/api/recommendation')
+    app.register_blueprint(questions_bp, url_prefix='/api/questions')
     
     # Basic health check route
     @app.route('/health')
     def health():
         return jsonify({"status": "ok", "message": "MediIntel Auth API is running!"}), 200
+
+    @app.route('/')
+    def index():
+        return jsonify({"message": "Welcome to the MediIntel API! Try /health to check status."}), 200
 
     return app

@@ -35,5 +35,8 @@ class MedicalReport(TimestampMixin, SoftDeleteMixin, db.Model):
     specialist_recommendation_confidence = db.Column(db.Float, nullable=True)
     key_findings_confidence = db.Column(db.Float, nullable=True)
     composite_confidence_score = db.Column(db.Float, nullable=True)
+    
+    # Generated Questions
+    generated_questions = db.Column(db.JSON, nullable=True)
 
     user = db.relationship('User', backref=db.backref('medical_reports', lazy=True))
