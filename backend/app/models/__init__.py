@@ -3,5 +3,6 @@ from app.models.medical_report import MedicalReport
 from app.models.health_record import HealthRecord
 from app.models.consultation import Consultation
 from app.models.audit_log import AuditLog
+from app.models.doctor_profile import DoctorProfile
 
-__all__ = ['User', 'MedicalReport', 'HealthRecord', 'Consultation', 'AuditLog']
+__all__ = ['User', 'MedicalReport', 'HealthRecord', 'Consultation', 'AuditLog', 'DoctorProfile']

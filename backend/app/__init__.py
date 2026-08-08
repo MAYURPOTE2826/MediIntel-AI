@@ -31,6 +31,7 @@ def create_app():
     from app.explanation.routes import explanation_bp
     from app.recommendation.routes import recommendation_bp
     from app.questions.routes import questions_bp
+    from app.finder.routes import finder_bp
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(uploads_bp, url_prefix='/api/uploads')
@@ -38,6 +39,7 @@ def create_app():
     app.register_blueprint(explanation_bp, url_prefix='/api/explanation')
     app.register_blueprint(recommendation_bp, url_prefix='/api/recommendation')
     app.register_blueprint(questions_bp, url_prefix='/api/questions')
+    app.register_blueprint(finder_bp, url_prefix='/api/finder')
     
     # Basic health check route
     @app.route('/health')
