@@ -15,6 +15,12 @@ class DoctorProfile(TimestampMixin, db.Model):
     phone = db.Column(db.String(20), nullable=True)
     city = db.Column(db.String(100), nullable=True, index=True)
     rating = db.Column(db.Float, nullable=True)
+    
+    # Booking Integration Fields
+    email = db.Column(db.String(255), nullable=True)
+    accepts_online_booking = db.Column(db.Boolean, default=False)
+    booking_platform = db.Column(db.String(50), nullable=True) # e.g., 'practo', 'zocdoc'
+    booking_url = db.Column(db.String(512), nullable=True)
 
     def to_dict(self):
         return {
@@ -26,5 +32,9 @@ class DoctorProfile(TimestampMixin, db.Model):
             "clinic_address": self.clinic_address,
             "phone": self.phone,
             "city": self.city,
-            "rating": self.rating
+            "rating": self.rating,
+            "email": self.email,
+            "accepts_online_booking": self.accepts_online_booking,
+            "booking_platform": self.booking_platform,
+            "booking_url": self.booking_url
         }
