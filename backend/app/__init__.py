@@ -39,6 +39,7 @@ def create_app():
     from app.finder.routes import finder_bp
     from app.appointments.routes import appointments_bp
     from app.timeline.routes import timeline_bp
+    from app.family.routes import family_bp
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(uploads_bp, url_prefix='/api/uploads')
@@ -49,6 +50,7 @@ def create_app():
     app.register_blueprint(finder_bp, url_prefix='/api/finder')
     app.register_blueprint(appointments_bp, url_prefix='/api/appointments')
     app.register_blueprint(timeline_bp, url_prefix='/api/timeline')
+    app.register_blueprint(family_bp, url_prefix='/api/family')
     
     # Basic health check route
     @app.route('/health')

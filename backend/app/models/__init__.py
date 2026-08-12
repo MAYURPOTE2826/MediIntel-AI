@@ -4,5 +4,6 @@ from app.models.health_record import HealthRecord
 from app.models.consultation import Consultation
 from app.models.audit_log import AuditLog
 from app.models.doctor_profile import DoctorProfile
+from app.models.family import FamilyMember
 
-__all__ = ['User', 'MedicalReport', 'HealthRecord', 'Consultation', 'AuditLog', 'DoctorProfile']
+__all__ = ['User', 'MedicalReport', 'HealthRecord', 'Consultation', 'AuditLog', 'DoctorProfile', 'FamilyMember']
