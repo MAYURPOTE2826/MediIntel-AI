@@ -3,11 +3,8 @@ import { ArrowUp, ArrowDown, Minus, RefreshCw, AlertTriangle } from 'lucide-reac
 import './CompareReports.css';
 
 const MOCK_REPORTS = [
-  { id: '4', date: '2026-03-20T11:45:00Z', name: 'Mar 2026 - Blood Test (Lipid Panel)' },
-  { id: '1', date: '2026-08-10T10:30:00Z', name: 'Aug 2026 - Blood Test (Comprehensive)' },
-  { id: '2', date: '2026-06-15T14:20:00Z', name: 'Jun 2026 - ECG' },
-  { id: '3', date: '2026-05-02T09:15:00Z', name: 'May 2026 - Chest X-Ray' },
-  { id: '5', date: '2026-02-10T16:00:00Z', name: 'Feb 2026 - MRI' }
+  { id: '11111111-1111-1111-1111-111111111111', date: '2026-03-20T11:45:00Z', name: 'Mar 2026 - Blood Test (Baseline)' },
+  { id: '22222222-2222-2222-2222-222222222222', date: '2026-08-10T10:30:00Z', name: 'Aug 2026 - Blood Test (Follow-up)' },
 ];
 
 const CompareReports = () => {

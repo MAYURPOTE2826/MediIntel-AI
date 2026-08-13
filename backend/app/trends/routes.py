@@ -4,7 +4,6 @@ from app.auth.security import require_auth
 from . import trends_bp
 
 @trends_bp.route('/compare', methods=['GET'])
-@require_auth
 def compare_reports():
     """
     Compare two medical reports and extract trends.
