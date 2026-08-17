@@ -3,7 +3,7 @@ import json
 import random
 from faker import Faker
 from langchain_core.documents import Document
-from langchain_community.vectorstores import FAISS
+from langchain_qdrant import QdrantVectorStore
 from langchain_huggingface import HuggingFaceEmbeddings
 from dotenv import load_dotenv
 
@@ -106,12 +106,17 @@ def main():
     try:
         embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
         
-        print("Creating FAISS index...")
-        vectorstore = FAISS.from_documents(docs, embeddings)
+        print("Creating Qdrant index...")
+        vectorstore_path = os.path.join(os.path.dirname(__file__), 'qdrant_db')
+        os.makedirs(vectorstore_path, exist_ok=True)
         
-        vectorstore_path = os.path.join(os.path.dirname(__file__), 'vectorstore')
-        vectorstore.save_local(vectorstore_path)
-        print(f"Successfully saved FAISS index to {vectorstore_path}")
+        QdrantVectorStore.from_documents(
+            docs,
+            embeddings,
+            path=vectorstore_path,
+            collection_name="medical_literature",
+        )
+        print(f"Successfully saved Qdrant index to {vectorstore_path}")
         
     except Exception as e:
         print(f"Error during ingestion: {e}")
