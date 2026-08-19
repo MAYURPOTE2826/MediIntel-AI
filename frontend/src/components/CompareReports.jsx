@@ -7,7 +7,7 @@ const MOCK_REPORTS = [
   { id: '22222222-2222-2222-2222-222222222222', date: '2026-08-10T10:30:00Z', name: 'Aug 2026 - Blood Test (Follow-up)' },
 ];
 
-const CompareReports = () => {
+const CompareReports = ({ language }) => {
   const [report1, setReport1] = useState('');
   const [report2, setReport2] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ const CompareReports = () => {
     setTrendsData(null);
 
     try {
-      const response = await fetch(`/api/trends/compare?report_id_1=${report1}&report_id_2=${report2}`);
+      const response = await fetch(`/api/trends/compare?report_id_1=${report1}&report_id_2=${report2}${language ? `&lang=${language}` : ''}`);
       if (!response.ok) {
         throw new Error('Failed to fetch from API');
       }

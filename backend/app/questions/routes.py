@@ -17,6 +17,7 @@ def generate_questions_route():
         return jsonify({"error": "Missing report_id"}), 400
         
     report_id = data['report_id']
+    target_language = data.get('lang', 'en')
     user_payload = g.current_user
     auth0_id = user_payload.get("sub")
     
@@ -26,7 +27,7 @@ def generate_questions_route():
         return jsonify({"error": "Report not found or unauthorized"}), 404
         
     try:
-        questions = generate_questions(report_id)
+        questions = generate_questions(report_id, target_language)
         return jsonify({
             "message": "Questions generated successfully",
             "data": questions

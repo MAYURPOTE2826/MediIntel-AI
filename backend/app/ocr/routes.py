@@ -17,6 +17,7 @@ def process_ocr():
         return jsonify({"error": "Missing report_id"}), 400
         
     report_id = data['report_id']
+    target_language = data.get('lang', 'en')
     user_payload = g.current_user
     auth0_id = user_payload.get("sub")
     
@@ -31,7 +32,7 @@ def process_ocr():
         # return jsonify({"message": "OCR task queued"}), 202
         
         # Currently running synchronously
-        result = process_ocr_task(report.id)
+        result = process_ocr_task(report.id, target_language)
         return jsonify({
             "message": "OCR processing completed",
             "extracted_data": result.get("extracted_data"),

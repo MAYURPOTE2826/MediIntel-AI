@@ -24,6 +24,7 @@ def chat_route():
     report_id = data['report_id']
     message = data['message']
     history = data.get('history', [])
+    target_language = data.get('lang', 'en')
     
     # Temporarily bypass user verification for MVP testing
     # user_payload = g.current_user
@@ -39,7 +40,7 @@ def chat_route():
         )
         
     try:
-        response_content = process_chat_message(report, message, history)
+        response_content = process_chat_message(report, message, history, target_language)
         return jsonify({
             "message": "Chat response generated successfully",
             "reply": response_content

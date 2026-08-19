@@ -17,9 +17,10 @@ def search():
         
     location = data['location']
     specialty = data['specialty']
+    target_language = data.get('lang', 'en')
     
     try:
-        results = search_doctors(location, specialty)
+        results = search_doctors(location, specialty, target_language)
         return jsonify({
             "message": "Search completed successfully",
             "data": results

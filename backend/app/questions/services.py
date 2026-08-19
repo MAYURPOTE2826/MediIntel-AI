@@ -5,6 +5,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
 from app.database import db
 from app.models.medical_report import MedicalReport
+from app.translation.services import translate_text
 
 SAFETY_BLOCKLIST = [
     "diagnose", "diagnosis", "prescribe", "prescription", "treatment plan",
@@ -19,7 +20,7 @@ def check_safety(text):
             return False
     return True
 
-def generate_questions(report_id):
+def generate_questions(report_id, target_language='en'):
     """
     Generates 5-7 simple, non-medical questions a patient should ask their doctor 
     based on the findings in their medical report.
@@ -35,7 +36,7 @@ def generate_questions(report_id):
     findings_text = report.explanation_text or "No specific findings generated yet."
     
     # Setup LLM
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=os.getenv('GOOGLE_API_KEY'))
+    llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=os.getenv('GOOGLE_API_KEY'))
     
     template = """
     You are an AI assistant helping a patient prepare for a doctor's consultation.
@@ -105,8 +106,11 @@ def generate_questions(report_id):
     # Keep only up to 7 questions
     safe_questions = safe_questions[:7]
         
+    # Translate questions
+    translated_questions = [translate_text(q, target_language) for q in safe_questions]
+        
     # Save to DB
-    report.generated_questions = safe_questions
+    report.generated_questions = translated_questions
     db.session.commit()
     
-    return safe_questions
+    return translated_questions

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Users, Mail, ShieldAlert, FileText, CheckCircle, Clock, Shield, Download, Lock } from 'lucide-react';
 import './FamilyDashboard.css';
 
-const FamilyDashboard = () => {
+const FamilyDashboard = ({ language }) => {
   const [familyData, setFamilyData] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -14,7 +14,7 @@ const FamilyDashboard = () => {
 
   useEffect(() => {
     fetchFamilyData();
-  }, []);
+  }, [language]);
 
   const fetchFamilyData = async () => {
     setLoading(true);

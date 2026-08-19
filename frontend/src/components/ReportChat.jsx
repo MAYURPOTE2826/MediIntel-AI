@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import './ReportChat.css';
 import ReactMarkdown from 'react-markdown';
 
-function ReportChat() {
+function ReportChat({ language }) {
   const [messages, setMessages] = useState([
     { role: 'assistant', content: "Hello. I am the MediIntel AI assistant. I can help answer questions based on your medical reports and trusted medical literature. Please remember I am an AI, not a doctor. **Consult your doctor** for any medical advice or diagnosis. How can I help you today?" }
   ]);
@@ -44,7 +44,8 @@ function ReportChat() {
         body: JSON.stringify({
           report_id: selectedReportId,
           message: userMsg.content,
-          history: messages // Sending full history, backend limits to last 10
+          history: messages, // Sending full history, backend limits to last 10
+          lang: language
         })
       });
       

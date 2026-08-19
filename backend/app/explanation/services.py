@@ -7,6 +7,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from app.database import db
 from app.models.medical_report import MedicalReport
+from app.translation.services import translate_text
 
 # Keywords that should flag a violation
 SAFETY_BLOCKLIST = [
@@ -40,7 +41,7 @@ def check_safety(text):
             return False
     return True
 
-def generate_explanation(report_id):
+def generate_explanation(report_id, target_language='en'):
     """
     Generates a simple medical explanation from OCR findings using RAG.
     """
@@ -58,7 +59,7 @@ def generate_explanation(report_id):
         raise RuntimeError("Vectorstore not available for RAG.")
         
     # Setup Langchain RAG
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=os.getenv('GOOGLE_API_KEY'))
+    llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=os.getenv('GOOGLE_API_KEY'))
     retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
     
     # Retrieve documents explicitly to save citations
@@ -139,6 +140,9 @@ Provide ONLY the JSON object, with no markdown formatting or backticks.
         # Append Mandatory Disclaimer
         if MANDATORY_DISCLAIMER.strip() not in output_text:
             output_text += MANDATORY_DISCLAIMER
+            
+        # Translate to target language using Google Translate API (with medical glossary)
+        output_text = translate_text(output_text, target_language)
             
         # 10% Manual QA
         requires_qa = random.random() < 0.10

@@ -9,6 +9,7 @@ from app.database import db
 from app.models.medical_report import MedicalReport
 from paddleocr import PaddleOCR
 from app.classifier.services import classify_document
+from app.translation.services import translate_text
 # Configure Redis cache (Fallback if not configured, or we can use a simpler approach)
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 try:
@@ -112,7 +113,7 @@ def extract_structured_data(ocr_results):
 
     return extracted_data, requires_manual_review, full_text, raw_confidence_scores
 
-def process_ocr_task(report_id):
+def process_ocr_task(report_id, target_language='en'):
     """
     Core function for processing OCR.
     Can be called synchronously or via a task queue.
@@ -147,6 +148,9 @@ def process_ocr_task(report_id):
         # 3. Extract Data & Apply Filters
         extracted_data, requires_manual_review, raw_text, raw_scores = extract_structured_data(result)
         
+        # Translate OCR Text
+        translated_raw_text = translate_text(raw_text, target_language)
+        
         # Calculate average confidence for OCR
         avg_conf = 0.0
         if raw_scores:
@@ -174,7 +178,7 @@ def process_ocr_task(report_id):
         # 5. Save to DB
         report.extracted_data = extracted_data
         report.requires_manual_review = requires_manual_review
-        report.raw_ocr_output = raw_text
+        report.raw_ocr_output = translated_raw_text
         report.confidence_score = avg_conf
         db.session.commit()
         
@@ -182,7 +186,7 @@ def process_ocr_task(report_id):
         response_data = {
             "extracted_data": extracted_data,
             "requires_manual_review": requires_manual_review,
-            "raw_text": raw_text,
+            "raw_text": translated_raw_text,
             "raw_confidence_scores": raw_scores,
             "average_confidence": avg_conf,
             "classification": {

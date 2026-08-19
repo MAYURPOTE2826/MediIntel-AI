@@ -6,6 +6,7 @@ from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
+from app.translation.services import translate_text
 
 # Global state for vectorstore to avoid re-initializing
 _vectorstore = None
@@ -23,7 +24,7 @@ def get_vectorstore():
         )
     return _vectorstore
 
-def process_chat_message(report, message, history):
+def process_chat_message(report, message, history, target_language='en'):
     """
     Processes a chat message using RAG and a Medical Report's context.
     - report: MedicalReport model instance
@@ -73,7 +74,11 @@ MEDICAL LITERATURE (Context):
     messages.append(HumanMessage(content=message))
     
     # 6. Call LLM
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=os.getenv('GOOGLE_API_KEY'), temperature=0.2)
+    llm = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=os.getenv('GOOGLE_API_KEY'), temperature=0.2)
     response = llm.invoke(messages)
     
-    return response.content
+    reply = response.content
+    if target_language != 'en':
+        reply = translate_text(reply, target_language)
+        
+    return reply

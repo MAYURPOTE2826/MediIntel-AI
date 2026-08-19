@@ -2,13 +2,14 @@ import os
 import requests
 from cachetools import TTLCache, cached
 from app.models.doctor_profile import DoctorProfile
+from app.translation.services import translate_text
 
 # 24-hour cache (24 * 60 * 60 seconds)
 # maxsize=100 allows caching up to 100 unique location+specialty queries
 finder_cache = TTLCache(maxsize=100, ttl=86400)
 
 @cached(cache=finder_cache)
-def search_doctors(location: str, specialty: str):
+def search_doctors(location: str, specialty: str, target_language: str = 'en'):
     """
     Searches for doctors based on location and specialty.
     Integrates with Google Places API and our internal DoctorProfile database.
@@ -56,8 +57,8 @@ def search_doctors(location: str, specialty: str):
                 verified = True
         
         formatted_results.append({
-            "name": name,
-            "address": address,
+            "name": translate_text(name, target_language) if name else None,
+            "address": translate_text(address, target_language) if address else None,
             "phone": "Available on Google", # Details API needed for actual phone
             "rating": rating,
             "distance_km": distance_km,

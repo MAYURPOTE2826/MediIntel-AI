@@ -17,6 +17,7 @@ def explain_report():
         return jsonify({"error": "Missing report_id"}), 400
         
     report_id = data['report_id']
+    target_language = data.get('lang', 'en')
     user_payload = g.current_user
     auth0_id = user_payload.get("sub")
     
@@ -26,7 +27,7 @@ def explain_report():
         return jsonify({"error": "Report not found or unauthorized"}), 404
         
     try:
-        result = generate_explanation(report_id)
+        result = generate_explanation(report_id, target_language)
         return jsonify({
             "message": "Explanation generated successfully",
             "data": result

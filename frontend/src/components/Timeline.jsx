@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FileText, Calendar, Activity, CheckCircle, Clock, Stethoscope, User, HeartPulse, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import './Timeline.css';
 
-const Timeline = () => {
+const Timeline = ({ language }) => {
   const [timelineData, setTimelineData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -13,7 +13,7 @@ const Timeline = () => {
 
   useEffect(() => {
     fetchTimelineData();
-  }, [filters]);
+  }, [filters, language]);
 
   const fetchTimelineData = async () => {
     setLoading(true);
@@ -23,6 +23,7 @@ const Timeline = () => {
       if (filters.startDate) queryParams.append('start_date', new Date(filters.startDate).toISOString());
       if (filters.endDate) queryParams.append('end_date', new Date(filters.endDate).toISOString());
       if (filters.reportType) queryParams.append('report_type', filters.reportType);
+      if (language) queryParams.append('lang', language);
       
       const queryString = queryParams.toString();
       const url = `/api/timeline${queryString ? `?${queryString}` : ''}`;
