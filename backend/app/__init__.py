@@ -42,6 +42,7 @@ def create_app():
     from app.family.routes import family_bp
     from app.trends.routes import trends_bp
     from app.chatbot.routes import chatbot_bp
+    from app.notifications import bp as notifications_bp
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(uploads_bp, url_prefix='/api/uploads')
@@ -55,6 +56,7 @@ def create_app():
     app.register_blueprint(family_bp, url_prefix='/api/family')
     app.register_blueprint(trends_bp, url_prefix='/api/trends')
     app.register_blueprint(chatbot_bp, url_prefix='/api/chatbot')
+    app.register_blueprint(notifications_bp, url_prefix='/')
     
     # Basic health check route
     @app.route('/health')

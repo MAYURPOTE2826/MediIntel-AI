@@ -5,5 +5,10 @@ from app.models.consultation import Consultation
 from app.models.audit_log import AuditLog
 from app.models.doctor_profile import DoctorProfile
 from app.models.family import FamilyMember
+from app.models.notification import NotificationPreference, Notification, Reminder
 
-__all__ = ['User', 'MedicalReport', 'HealthRecord', 'Consultation', 'AuditLog', 'DoctorProfile', 'FamilyMember']
+__all__ = [
+    'User', 'MedicalReport', 'HealthRecord', 'Consultation', 
+    'AuditLog', 'DoctorProfile', 'FamilyMember',
+    'NotificationPreference', 'Notification', 'Reminder'
+]
