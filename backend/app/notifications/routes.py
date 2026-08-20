@@ -1,7 +1,7 @@
 import logging
 from flask import request, jsonify
 from app.database import db
-from app.auth.middleware import require_auth
+from app.auth.security import require_auth
 from app.models.notification import NotificationPreference, Notification, Reminder
 from app.notifications import bp
 

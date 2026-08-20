@@ -8,6 +8,7 @@ from app.models.medical_report import MedicalReport
 from app.models.audit_log import AuditLog
 from app.auth.security import require_auth
 from app.uploads.services import validate_file_type, scan_with_virustotal, upload_to_s3, FileValidationError
+from app.monitoring import upload_volume_counter
 
 uploads_bp = Blueprint('uploads_bp', __name__)
 
@@ -71,6 +72,10 @@ def process_completed_upload(filepath, original_filename, user_id):
         
         # Determine report_type based on mime (simplified logic)
         report_type = 'PDF Document' if mime_type == 'application/pdf' else 'Image Document'
+        
+        # Record upload metric
+        file_size = os.path.getsize(filepath)
+        upload_volume_counter.labels(file_type=mime_type).inc(file_size)
         
         # 2. Scan with VirusTotal
         scan_status = scan_with_virustotal(filepath)

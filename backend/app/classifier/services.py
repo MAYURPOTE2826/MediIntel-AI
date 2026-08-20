@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from PIL import Image
 import torch
 from transformers import pipeline
+from app.monitoring import ai_confidence_histogram, ai_inference_latency_histogram
 
 # We use a base document image classification model as a placeholder for the fine-tuned one
 MODEL_NAME = os.environ.get("CLASSIFIER_MODEL_NAME", "microsoft/dit-base-finetuned-rvlcdip")
@@ -55,6 +56,7 @@ def classify_document(image_path):
     results = classifier_pipeline(image, top_k=3)
     
     latency_ms = (time.time() - start_time) * 1000
+    ai_inference_latency_histogram.labels(model_name=MODEL_NAME).observe(latency_ms / 1000.0)
     
     # Process results
     if not results:
@@ -63,6 +65,8 @@ def classify_document(image_path):
     top_prediction = results[0]
     document_type = top_prediction["label"]
     confidence = top_prediction["score"]
+    
+    ai_confidence_histogram.labels(model_name=MODEL_NAME).observe(confidence)
     
     # Threshold for safety check
     requires_manual_review = confidence < 0.85

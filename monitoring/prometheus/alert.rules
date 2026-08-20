@@ -1,0 +1,36 @@
+groups:
+- name: medintel_alerts
+  rules:
+  # OCR accuracy drops below 85%
+  - alert: LowOcrAccuracy
+    expr: medintel_ocr_accuracy_rate < 0.85
+    for: 1m
+    labels:
+      severity: critical
+      team: on_call
+    annotations:
+      summary: "OCR Accuracy is below 85%"
+      description: "OCR accuracy rate has dropped to {{ $value }} over the last 1m."
+
+  # API response > 2s
+  # Using prometheus-flask-exporter default metric name flask_http_request_duration_seconds
+  - alert: HighApiResponseTime
+    expr: rate(flask_http_request_duration_seconds_sum[1m]) / rate(flask_http_request_duration_seconds_count[1m]) > 2
+    for: 1m
+    labels:
+      severity: warning
+      team: devops
+    annotations:
+      summary: "API response time > 2s"
+      description: "High API latency detected: {{ $value }}s."
+
+  # Error rates > 1%
+  - alert: HighErrorRate
+    expr: sum(rate(flask_http_request_duration_seconds_count{status=~"5.."}[1m])) / sum(rate(flask_http_request_duration_seconds_count[1m])) > 0.01
+    for: 1m
+    labels:
+      severity: critical
+      team: on_call
+    annotations:
+      summary: "High Error Rate (>1%)"
+      description: "The API 5xx error rate is currently at {{ $value }}."

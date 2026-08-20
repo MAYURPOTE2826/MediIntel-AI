@@ -2,6 +2,7 @@ import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
+from prometheus_flask_exporter import PrometheusMetrics
 
 from app.database import db
 
@@ -13,6 +14,10 @@ def create_app():
     
     # Enable CORS
     CORS(app)
+    
+    # Initialize Prometheus Metrics
+    metrics = PrometheusMetrics(app)
+    app.metrics = metrics
     
     # Configure Database
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')

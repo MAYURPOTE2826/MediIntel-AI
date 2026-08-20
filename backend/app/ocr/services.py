@@ -10,6 +10,7 @@ from app.models.medical_report import MedicalReport
 from paddleocr import PaddleOCR
 from app.classifier.services import classify_document
 from app.translation.services import translate_text
+from app.monitoring import ocr_accuracy_gauge
 # Configure Redis cache (Fallback if not configured, or we can use a simpler approach)
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 try:
@@ -155,6 +156,8 @@ def process_ocr_task(report_id, target_language='en'):
         avg_conf = 0.0
         if raw_scores:
             avg_conf = sum(item["confidence"] for item in raw_scores) / len(raw_scores)
+            
+        ocr_accuracy_gauge.labels(module='ocr').set(avg_conf)
             
         # 4. Run Document Classifier
         try:
