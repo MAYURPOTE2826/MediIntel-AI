@@ -1,0 +1,87 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: backend-rollout
+  namespace: medintel-prod
+spec:
+  replicas: 3
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: medintel-backend
+  template:
+    metadata:
+      labels:
+        app: medintel-backend
+    spec:
+      containers:
+        - name: backend
+          image: YOUR_REGISTRY/medintel-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: medintel-db-secrets
+                  key: DATABASE_URL
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: medintel-db-secrets
+                  key: REDIS_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: medintel-db-secrets
+                  key: JWT_SECRET
+          volumeMounts:
+            - name: secrets-store-inline
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "aws-secrets"
+  strategy:
+    blueGreen:
+      activeService: backend-active-svc
+      previewService: backend-preview-svc
+      autoPromotionEnabled: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-active-svc
+  namespace: medintel-prod
+spec:
+  selector:
+    app: medintel-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-preview-svc
+  namespace: medintel-prod
+spec:
+  selector:
+    app: medintel-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000

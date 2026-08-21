@@ -1,6 +1,51 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    environment:
+      - POSTGRES_USER=medintel
+      - POSTGRES_PASSWORD=medintel_password
+      - POSTGRES_DB=medintel_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  backend:
+    build: 
+      context: ./backend
+    container_name: fastapi_backend
+    environment:
+      - DATABASE_URL=postgresql://medintel:medintel_password@postgres:5432/medintel_db
+      - REDIS_URL=redis://redis:6379
+      # Add other necessary env vars from .env here
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: react_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -46,3 +91,4 @@ services:
 volumes:
   prometheus_data:
   grafana_data:
+  postgres_data:

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: medintel-frontend
+  namespace: medintel-prod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: medintel-frontend
+  template:
+    metadata:
+      labels:
+        app: medintel-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: YOUR_REGISTRY/medintel-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+  namespace: medintel-prod
+spec:
+  selector:
+    app: medintel-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

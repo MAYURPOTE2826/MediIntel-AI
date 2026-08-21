@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: pg-backup-to-s3
+  namespace: medintel-prod
+spec:
+  schedule: "0 2 * * *" # Run at 2 AM every day
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: pg-backup
+            image: amazon/aws-cli:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              yum install -y postgresql
+              DATE=$(date +%Y-%m-%d_%H-%M-%S)
+              BACKUP_FILE="backup_$DATE.sql"
+              echo "Starting database backup..."
+              pg_dump $DATABASE_URL > $BACKUP_FILE
+              echo "Uploading to S3..."
+              aws s3 cp $BACKUP_FILE s3://YOUR_BUCKET_NAME/backups/$BACKUP_FILE
+              echo "Backup complete!"
+            env:
+              - name: DATABASE_URL
+                valueFrom:
+                  secretKeyRef:
+                    name: medintel-db-secrets
+                    key: DATABASE_URL
+              # AWS Credentials typically handled by IRSA (IAM Roles for Service Accounts) in EKS
+              # so we don't need to hardcode AWS_ACCESS_KEY_ID here.
+          restartPolicy: OnFailure
